@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL
+namespace Entity
 {
-    public class Class1
+    public class DataResponse<T> : Response
     {
+         public List<T> Data { get; set; }
     }
 }
