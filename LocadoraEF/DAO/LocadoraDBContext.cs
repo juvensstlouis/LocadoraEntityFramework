@@ -1,7 +1,9 @@
-﻿using Entity;
+﻿using DAO.Mappings;
+using Entity;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -24,6 +26,14 @@ namespace DAO
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+
+            modelBuilder.Configurations.Add(new ClienteMapConfig());
+            modelBuilder.Configurations.Add(new FuncionarioMapConfig());
+            modelBuilder.Configurations.Add(new GeneroMapConfig());
+            modelBuilder.Configurations.Add(new FilmeMapConfig());
+            modelBuilder.Configurations.Add(new LocacaoMapConfig());
+            
             base.OnModelCreating(modelBuilder);
         }
 

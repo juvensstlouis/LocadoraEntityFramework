@@ -21,7 +21,27 @@ namespace WFPL
 
         private void button1_Click(object sender, EventArgs e)
         {
-            new ClienteService().Insert(null);
+            DataResponse<Cliente> response = new ClienteService().GetByID(3);
+
+            if (response.Sucesso)
+            {
+                if (response.Data.Count != 0)
+                {
+                    foreach (Cliente item in response.Data)
+                    {
+                        MessageBox.Show(item.Nome);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Cliente não encontrado");
+                }
+            }
+            else
+            {
+                MessageBox.Show(response.GetErrorMessage());
+            }
+
         }
     }
 }

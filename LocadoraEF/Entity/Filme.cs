@@ -14,10 +14,9 @@ namespace Entity
         public DateTime DataLancamento { get; set; }
         public Classificacao Classificacao { get; set; }
         public int Duracao { get; set; }
-        public virtual ICollection<Genero> Generos { get; set; }
+        public int GeneroID { get; set; }
+        public virtual Genero Genero { get; set; }
         public virtual ICollection<Locacao> Locacoes { get; set; }
-
-
 
         /// <summary>
         /// Calcula a devolução do filme

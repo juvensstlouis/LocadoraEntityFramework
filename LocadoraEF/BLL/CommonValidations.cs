@@ -24,8 +24,8 @@ namespace BLL
 
         public static bool IsValidPassword(this string senha)
         {
-            //1 caixa alta, 1 simbolo, e 8 a 15 caracteres.
-            string regex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$";
+            //1 caixa alta, 1 simbolo, e 8 a 30 caracteres.
+            string regex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,30}$";
             return Regex.IsMatch(senha, regex);
         }
 
