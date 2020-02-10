@@ -29,6 +29,12 @@ namespace BLL
             return Regex.IsMatch(senha, regex);
         }
 
+        public static bool IsTelefone(this string telefone)
+        {
+            string regex = @"\(\d{2}\)\s\d{4,5}\-\d{4}"; //(00) 00000 - 0000 ou (00) 0000 - 0000
+            return Regex.IsMatch(telefone, regex);
+        }
+
         public static bool IsCpf(this string cpf)
         {
             int[] multiplicador1 = new int[9] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };

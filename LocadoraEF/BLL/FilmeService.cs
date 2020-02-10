@@ -1,6 +1,8 @@
 ﻿using BLL.Interfaces;
 using DAO;
 using Entity;
+using Entity.Enums;
+using Entity.ResultSets;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace BLL
 {
-    public class ClienteService : IEntityCRUD<Cliente>
+    class FilmeService : IEntityCRUD<Filme>
     {
-        public Response Insert(Cliente item)
+        public Response Insert(Filme item)
         {
             Response response = Validate(item);
-            
+
             if (response.HasErrors())
             {
                 response.Sucesso = false;
@@ -26,41 +28,21 @@ namespace BLL
             {
                 try
                 {
-                    db.Clientes.Add(item);
+                    db.Filmes.Add(item);
                     db.SaveChanges();
                     response.Sucesso = true;
                     return response;
                 }
-                catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
-                {
-                    response.Sucesso = false;
-
-                    if (ex.InnerException.ToString().Contains("IX_CPF"))
-                    {
-                        response.Erros.Add("CPF já cadastrado.");
-                    }
-                    else if (ex.InnerException.ToString().Contains("IX_Email"))
-                    {
-                        response.Erros.Add("Email já cadastrado.");
-                    }
-                    else
-                    {
-                        response.Erros.Add("Erro ao adicionar um cliente. Contate o admin!");
-                        File.WriteAllText("log.txt", ex.Message);
-                    }
-
-                    return response;
-                }
                 catch (Exception ex)
                 {
-                    response.Erros.Add("Erro ao adicionar um cliente. Contate o admin!");
+                    response.Erros.Add("Erro ao adicionar um filme. Contate o admin!");
                     File.WriteAllText("log.txt", ex.Message);
                     return response;
                 }
             }
         }
 
-        public Response Update(Cliente item)
+        public Response Update(Filme item)
         {
             Response response = Validate(item);
 
@@ -81,7 +63,7 @@ namespace BLL
                 }
                 catch (Exception ex)
                 {
-                    response.Erros.Add("Erro ao atualizar um cliente. Contate o admin!");
+                    response.Erros.Add("Erro ao atualizar um filme. Contate o admin!");
                     File.WriteAllText("log.txt", ex.Message);
                     return response;
                 }
@@ -94,7 +76,7 @@ namespace BLL
 
             if (id <= 0)
             {
-                response.Erros.Add("ID do cliente não foi informado.");
+                response.Erros.Add("ID do filme não foi informado.");
                 return response;
             }
 
@@ -102,29 +84,29 @@ namespace BLL
             {
                 try
                 {
-                    db.Entry(new Cliente() { ID = id}).State = System.Data.Entity.EntityState.Deleted;
+                    db.Entry(new Filme() { ID = id }).State = System.Data.Entity.EntityState.Deleted;
                     db.SaveChanges();
                     response.Sucesso = true;
                     return response;
                 }
                 catch (Exception ex)
                 {
-                    response.Erros.Add("Erro ao deletar um cliente. Contate o admin!");
+                    response.Erros.Add("Erro ao deletar um filme. Contate o admin!");
                     File.WriteAllText("log.txt", ex.Message);
                     return response;
                 }
             }
         }
 
-        public DataResponse<Cliente> GetData()
+        public DataResponse<Filme> GetData()
         {
-            DataResponse<Cliente> response = new DataResponse<Cliente>();
+            DataResponse<Filme> response = new DataResponse<Filme>();
 
             using (LocadoraDBContext db = new LocadoraDBContext())
             {
                 try
                 {
-                    response.Data = db.Clientes.ToList();
+                    response.Data = db.Filmes.ToList();
                     response.Sucesso = true;
                     return response;
                 }
@@ -137,25 +119,30 @@ namespace BLL
             }
         }
 
-        public DataResponse<Cliente> GetByID(int id)
+        public DataResponse<FilmeResultSet> GetFilmes()
         {
-            DataResponse<Cliente> response = new DataResponse<Cliente>();
+            throw new NotImplementedException();
+        }
+
+        public DataResponse<Filme> GetByID(int id)
+        {
+            DataResponse<Filme> response = new DataResponse<Filme>();
 
             using (LocadoraDBContext db = new LocadoraDBContext())
             {
                 try
                 {
-                    List<Cliente> clientes = new List<Cliente>();
+                    List<Filme> filmes = new List<Filme>();
 
-                    Cliente cliente = db.Clientes.Find(id);
-                    
-                    if (cliente != null)
+                    Filme filme = db.Filmes.Find(id);
+
+                    if (filme != null)
                     {
-                        clientes.Add(cliente); 
+                        filmes.Add(filme);
                     }
 
                     response.Sucesso = true;
-                    response.Data = clientes;
+                    response.Data = filmes;
                     return response;
                 }
                 catch (Exception ex)
@@ -167,47 +154,34 @@ namespace BLL
             }
         }
 
-        private Response Validate(Cliente item)
+        private Response Validate(Filme item)
         {
             Response response = new Response();
 
             if (string.IsNullOrWhiteSpace(item.Nome))
             {
-                response.Erros.Add("O nome do cliente deve ser informado.");
+                response.Erros.Add("O nome do filme deve ser informado.");
             }
             else
             {
                 item.Nome = item.Nome.Normatizar();
 
-                if (item.Nome.Length < 2 || item.Nome.Length > 50)
+                if (item.Nome.Length < 2 || item.Nome.Length > 100)
                 {
-                    response.Erros.Add("O nome do cliente deve conter entre 2 e 50 caracteres.");
+                    response.Erros.Add("O nome do filme deve conter entre 2 e 100 caracteres.");
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(item.CPF))
+            if (item.Duracao <= 0)
             {
-                response.Erros.Add("O CPF do cliente deve ser informado.");
-            }
-            else
-            {
-                if (!item.CPF.IsCpf())
-                {
-                    response.Erros.Add("O CPF do cliente é invalido.");
-                }
-
+                response.Erros.Add("A duração do filme não é valido.");
             }
 
-            if (string.IsNullOrWhiteSpace(item.Email))
+            if (item.DataLancamento == DateTime.MinValue
+                ||
+                item.DataLancamento > DateTime.Now)
             {
-                response.Erros.Add("O email do cliente deve ser informado.");
-            }
-            else
-            {
-                if (!item.Email.IsEmail())
-                {
-                    response.Erros.Add("O email do cliente é invalido.");
-                }
+                response.Erros.Add("Data inválida.");
             }
 
             return response;

@@ -52,8 +52,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IFilmeService.cs" />
+    <Compile Include="Interfaces\IFuncionarioService.cs" />
+    <Compile Include="Interfaces\ILocacaoService.cs" />
+    <Compile Include="LocacaoService.cs" />
     <Compile Include="ClienteService.cs" />
     <Compile Include="CommonValidations.cs" />
+    <Compile Include="FilmeService.cs" />
+    <Compile Include="FuncionarioService.cs" />
+    <Compile Include="GeneroService.cs" />
     <Compile Include="Interfaces\IEntityCRUD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\HashUtils.cs" />

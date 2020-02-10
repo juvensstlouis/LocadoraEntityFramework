@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace BLL
 {
-    public class ClienteService : IEntityCRUD<Cliente>
+    class GeneroService : IEntityCRUD<Genero>
     {
-        public Response Insert(Cliente item)
+        public Response Insert(Genero item)
         {
             Response response = Validate(item);
-            
+
             if (response.HasErrors())
             {
                 response.Sucesso = false;
@@ -26,41 +26,21 @@ namespace BLL
             {
                 try
                 {
-                    db.Clientes.Add(item);
+                    db.Generos.Add(item);
                     db.SaveChanges();
                     response.Sucesso = true;
                     return response;
                 }
-                catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
-                {
-                    response.Sucesso = false;
-
-                    if (ex.InnerException.ToString().Contains("IX_CPF"))
-                    {
-                        response.Erros.Add("CPF já cadastrado.");
-                    }
-                    else if (ex.InnerException.ToString().Contains("IX_Email"))
-                    {
-                        response.Erros.Add("Email já cadastrado.");
-                    }
-                    else
-                    {
-                        response.Erros.Add("Erro ao adicionar um cliente. Contate o admin!");
-                        File.WriteAllText("log.txt", ex.Message);
-                    }
-
-                    return response;
-                }
                 catch (Exception ex)
                 {
-                    response.Erros.Add("Erro ao adicionar um cliente. Contate o admin!");
+                    response.Erros.Add("Erro ao adicionar um genero. Contate o admin!");
                     File.WriteAllText("log.txt", ex.Message);
                     return response;
                 }
             }
         }
 
-        public Response Update(Cliente item)
+        public Response Update(Genero item)
         {
             Response response = Validate(item);
 
@@ -81,7 +61,7 @@ namespace BLL
                 }
                 catch (Exception ex)
                 {
-                    response.Erros.Add("Erro ao atualizar um cliente. Contate o admin!");
+                    response.Erros.Add("Erro ao atualizar um genero. Contate o adminGenero!");
                     File.WriteAllText("log.txt", ex.Message);
                     return response;
                 }
@@ -94,7 +74,7 @@ namespace BLL
 
             if (id <= 0)
             {
-                response.Erros.Add("ID do cliente não foi informado.");
+                response.Erros.Add("ID do genero não foi informado.");
                 return response;
             }
 
@@ -102,29 +82,29 @@ namespace BLL
             {
                 try
                 {
-                    db.Entry(new Cliente() { ID = id}).State = System.Data.Entity.EntityState.Deleted;
+                    db.Entry(new Genero() { ID = id }).State = System.Data.Entity.EntityState.Deleted;
                     db.SaveChanges();
                     response.Sucesso = true;
                     return response;
                 }
                 catch (Exception ex)
                 {
-                    response.Erros.Add("Erro ao deletar um cliente. Contate o admin!");
+                    response.Erros.Add("Erro ao deletar um genero. Contate o admin!");
                     File.WriteAllText("log.txt", ex.Message);
                     return response;
                 }
             }
         }
 
-        public DataResponse<Cliente> GetData()
+        public DataResponse<Genero> GetData()
         {
-            DataResponse<Cliente> response = new DataResponse<Cliente>();
+            DataResponse<Genero> response = new DataResponse<Genero>();
 
             using (LocadoraDBContext db = new LocadoraDBContext())
             {
                 try
                 {
-                    response.Data = db.Clientes.ToList();
+                    response.Data = db.Generos.ToList();
                     response.Sucesso = true;
                     return response;
                 }
@@ -137,25 +117,25 @@ namespace BLL
             }
         }
 
-        public DataResponse<Cliente> GetByID(int id)
+        public DataResponse<Genero> GetByID(int id)
         {
-            DataResponse<Cliente> response = new DataResponse<Cliente>();
+            DataResponse<Genero> response = new DataResponse<Genero>();
 
             using (LocadoraDBContext db = new LocadoraDBContext())
             {
                 try
                 {
-                    List<Cliente> clientes = new List<Cliente>();
+                    List<Genero> generos = new List<Genero>();
 
-                    Cliente cliente = db.Clientes.Find(id);
-                    
-                    if (cliente != null)
+                    Genero genero = db.Generos.Find(id);
+
+                    if (genero != null)
                     {
-                        clientes.Add(cliente); 
+                        generos.Add(genero);
                     }
 
                     response.Sucesso = true;
-                    response.Data = clientes;
+                    response.Data = generos;
                     return response;
                 }
                 catch (Exception ex)
@@ -167,13 +147,13 @@ namespace BLL
             }
         }
 
-        private Response Validate(Cliente item)
+        private Response Validate(Genero item)
         {
             Response response = new Response();
 
             if (string.IsNullOrWhiteSpace(item.Nome))
             {
-                response.Erros.Add("O nome do cliente deve ser informado.");
+                response.Erros.Add("O nome do gênero deve ser informado.");
             }
             else
             {
@@ -181,32 +161,7 @@ namespace BLL
 
                 if (item.Nome.Length < 2 || item.Nome.Length > 50)
                 {
-                    response.Erros.Add("O nome do cliente deve conter entre 2 e 50 caracteres.");
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(item.CPF))
-            {
-                response.Erros.Add("O CPF do cliente deve ser informado.");
-            }
-            else
-            {
-                if (!item.CPF.IsCpf())
-                {
-                    response.Erros.Add("O CPF do cliente é invalido.");
-                }
-
-            }
-
-            if (string.IsNullOrWhiteSpace(item.Email))
-            {
-                response.Erros.Add("O email do cliente deve ser informado.");
-            }
-            else
-            {
-                if (!item.Email.IsEmail())
-                {
-                    response.Erros.Add("O email do cliente é invalido.");
+                    response.Erros.Add("O nome do gênero deve conter entre 2 e 50 caracteres");
                 }
             }
 

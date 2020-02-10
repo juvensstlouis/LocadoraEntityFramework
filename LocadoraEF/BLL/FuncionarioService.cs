@@ -1,4 +1,5 @@
 ﻿using BLL.Interfaces;
+using BLL.Security;
 using DAO;
 using Entity;
 using System;
@@ -10,23 +11,26 @@ using System.Threading.Tasks;
 
 namespace BLL
 {
-    public class ClienteService : IEntityCRUD<Cliente>
+    public class FuncionarioService : IEntityCRUD<Funcionario>, IFuncionarioService
     {
-        public Response Insert(Cliente item)
+        public Response Insert(Funcionario item)
         {
             Response response = Validate(item);
-            
+
             if (response.HasErrors())
             {
                 response.Sucesso = false;
                 return response;
             }
 
+            item.EhAtivo = true;
+            item.Senha = HashUtils.HashPassword(item.Senha);
+
             using (LocadoraDBContext db = new LocadoraDBContext())
             {
                 try
                 {
-                    db.Clientes.Add(item);
+                    db.Funcionarios.Add(item);
                     db.SaveChanges();
                     response.Sucesso = true;
                     return response;
@@ -45,7 +49,7 @@ namespace BLL
                     }
                     else
                     {
-                        response.Erros.Add("Erro ao adicionar um cliente. Contate o admin!");
+                        response.Erros.Add("Erro ao adicionar um funcionário. Contate o admin!");
                         File.WriteAllText("log.txt", ex.Message);
                     }
 
@@ -53,14 +57,14 @@ namespace BLL
                 }
                 catch (Exception ex)
                 {
-                    response.Erros.Add("Erro ao adicionar um cliente. Contate o admin!");
+                    response.Erros.Add("Erro ao adicionar um funcionário. Contate o admin!");
                     File.WriteAllText("log.txt", ex.Message);
                     return response;
                 }
             }
         }
 
-        public Response Update(Cliente item)
+        public Response Update(Funcionario item)
         {
             Response response = Validate(item);
 
@@ -81,7 +85,7 @@ namespace BLL
                 }
                 catch (Exception ex)
                 {
-                    response.Erros.Add("Erro ao atualizar um cliente. Contate o admin!");
+                    response.Erros.Add("Erro ao atualizar um funcionário. Contate o admin!");
                     File.WriteAllText("log.txt", ex.Message);
                     return response;
                 }
@@ -94,7 +98,7 @@ namespace BLL
 
             if (id <= 0)
             {
-                response.Erros.Add("ID do cliente não foi informado.");
+                response.Erros.Add("ID do funcionário não foi informado.");
                 return response;
             }
 
@@ -102,29 +106,29 @@ namespace BLL
             {
                 try
                 {
-                    db.Entry(new Cliente() { ID = id}).State = System.Data.Entity.EntityState.Deleted;
+                    db.Entry(new Funcionario() { ID = id }).State = System.Data.Entity.EntityState.Deleted;
                     db.SaveChanges();
                     response.Sucesso = true;
                     return response;
                 }
                 catch (Exception ex)
                 {
-                    response.Erros.Add("Erro ao deletar um cliente. Contate o admin!");
+                    response.Erros.Add("Erro ao deletar um funcionário. Contate o admin!");
                     File.WriteAllText("log.txt", ex.Message);
                     return response;
                 }
             }
         }
 
-        public DataResponse<Cliente> GetData()
+        public DataResponse<Funcionario> GetData()
         {
-            DataResponse<Cliente> response = new DataResponse<Cliente>();
+            DataResponse<Funcionario> response = new DataResponse<Funcionario>();
 
             using (LocadoraDBContext db = new LocadoraDBContext())
             {
                 try
                 {
-                    response.Data = db.Clientes.ToList();
+                    response.Data = db.Funcionarios.ToList();
                     response.Sucesso = true;
                     return response;
                 }
@@ -137,25 +141,25 @@ namespace BLL
             }
         }
 
-        public DataResponse<Cliente> GetByID(int id)
+        public DataResponse<Funcionario> GetByID(int id)
         {
-            DataResponse<Cliente> response = new DataResponse<Cliente>();
+            DataResponse<Funcionario> response = new DataResponse<Funcionario>();
 
             using (LocadoraDBContext db = new LocadoraDBContext())
             {
                 try
                 {
-                    List<Cliente> clientes = new List<Cliente>();
-
-                    Cliente cliente = db.Clientes.Find(id);
+                    List<Funcionario> funcionarios = new List<Funcionario>();
                     
-                    if (cliente != null)
+                    Funcionario funcionario = db.Funcionarios.Find(id);
+                    
+                    if (funcionario != null)
                     {
-                        clientes.Add(cliente); 
+                        funcionarios.Add(funcionario);
                     }
 
                     response.Sucesso = true;
-                    response.Data = clientes;
+                    response.Data = funcionarios;
                     return response;
                 }
                 catch (Exception ex)
@@ -167,13 +171,46 @@ namespace BLL
             }
         }
 
-        private Response Validate(Cliente item)
+        public DataResponse<Funcionario> Autenticar(string email, string senha)
+        {
+            DataResponse<Funcionario> response = new DataResponse<Funcionario>();
+
+            if (!email.IsEmail() || !senha.IsValidPassword())
+            {
+                response.Sucesso = false;
+                response.Erros.Add("Email e/ou Senha incorreto(s).");
+                return response;
+            }
+
+            string senhaHasheada = HashUtils.HashPassword(senha);
+
+            using (LocadoraDBContext db = new LocadoraDBContext())
+            {
+                try
+                {
+                    response.Data = db.Funcionarios.Where(f => f.Email == email &&
+                                                          f.Senha == senhaHasheada)
+                                                   .ToList();
+                    response.Sucesso = true;
+                    User.FuncionarioLogado = response.Data[0];
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    response.Erros.Add("Erro ao adicionar um funcionário. Contate o admin!");
+                    File.WriteAllText("log.txt", ex.Message);
+                    return response;
+                }
+            }
+        }
+
+        private Response Validate(Funcionario item)
         {
             Response response = new Response();
 
             if (string.IsNullOrWhiteSpace(item.Nome))
             {
-                response.Erros.Add("O nome do cliente deve ser informado.");
+                response.Erros.Add("O nome do funcionário deve ser informado.");
             }
             else
             {
@@ -181,32 +218,57 @@ namespace BLL
 
                 if (item.Nome.Length < 2 || item.Nome.Length > 50)
                 {
-                    response.Erros.Add("O nome do cliente deve conter entre 2 e 50 caracteres.");
+                    response.Erros.Add("O nome do funcionário deve conter entre 2 e 50 caracteres.");
                 }
             }
 
             if (string.IsNullOrWhiteSpace(item.CPF))
             {
-                response.Erros.Add("O CPF do cliente deve ser informado.");
+                response.Erros.Add("O CPF do funcionário deve ser informado.");
             }
             else
             {
                 if (!item.CPF.IsCpf())
                 {
-                    response.Erros.Add("O CPF do cliente é invalido.");
+                    response.Erros.Add("O CPF do funcionário é invalido.");
                 }
+            }
 
+            if (string.IsNullOrWhiteSpace(item.Telefone))
+            {
+                response.Erros.Add("O telefone do funcionário deve ser informado.");
+            }
+            else
+            {
+                item.Telefone = item.Telefone.Trim();
+
+                if (item.Telefone.IsTelefone())
+                {
+                    response.Erros.Add("O telefone do funcionário é invalido.");
+                }
             }
 
             if (string.IsNullOrWhiteSpace(item.Email))
             {
-                response.Erros.Add("O email do cliente deve ser informado.");
+                response.Erros.Add("O email do funcionário deve ser informado.");
             }
             else
             {
                 if (!item.Email.IsEmail())
                 {
-                    response.Erros.Add("O email do cliente é invalido.");
+                    response.Erros.Add("O email do funcionário é invalido.");
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(item.Senha))
+            {
+                response.Erros.Add("Uma senha deve ser informada.");
+            }
+            else
+            {
+                if (!item.Senha.IsValidPassword())
+                {
+                    response.Erros.Add("A senha deve conter de 8 a 15 caracteres e pelo menos 1 caixa alta e 1 simbolo");
                 }
             }
 
