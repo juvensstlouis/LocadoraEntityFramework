@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BLL
 {
-    class FilmeService : IEntityCRUD<Filme>
+    public class FilmeService : IEntityCRUD<Filme>, IFilmeService
     {
         public Response Insert(Filme item)
         {
@@ -154,6 +154,21 @@ namespace BLL
             }
         }
 
+        public DataResponse<FilmeResultSet> GetFilmesByName(string nome)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DataResponse<FilmeResultSet> GetFilmesByGenero(int genero)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DataResponse<FilmeResultSet> GetFilmesByClassificacao(Classificacao classificacao)
+        {
+            throw new NotImplementedException();
+        }
+
         private Response Validate(Filme item)
         {
             Response response = new Response();
@@ -186,5 +201,6 @@ namespace BLL
 
             return response;
         }
+
     }
 }

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // As informações gerais sobre um assembly são controladas por
 // conjunto de atributos. Altere estes valores de atributo para modificar as informações
 // associadas a um assembly.
-[assembly: AssemblyTitle("WFPL")]
+[assembly: AssemblyTitle("WFPresentation")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("WFPL")]
+[assembly: AssemblyProduct("WFPresentation")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // O GUID a seguir será destinado à ID de typelib se este projeto for exposto para COM
-[assembly: Guid("da4b7740-ffd2-4a95-aa2c-8fd71b6f3f56")]
+[assembly: Guid("a04db55f-c93e-4bf7-b15a-d52b77dc095f")]
 
 // As informações da versão de um assembly consistem nos quatro valores a seguir:
 //

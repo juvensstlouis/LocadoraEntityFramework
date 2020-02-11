@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAO", "DAO\DAO.csproj", "{D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entity", "Entity\Entity.csproj", "{7701E044-941E-4C93-8D6D-D8D6D71D267C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFPresentation", "..\..\LocadoraADONET\WFPresentationLayer\WFPresentation.csproj", "{A04DB55F-C93E-4BF7-B15A-D52B77DC095F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFPresentation", "WFPresentation\WFPresentation.csproj", "{A04DB55F-C93E-4BF7-B15A-D52B77DC095F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

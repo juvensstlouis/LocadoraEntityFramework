@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BLL
 {
-    class GeneroService : IEntityCRUD<Genero>
+    public class GeneroService : IEntityCRUD<Genero>
     {
         public Response Insert(Genero item)
         {
