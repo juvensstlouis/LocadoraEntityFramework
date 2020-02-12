@@ -33,6 +33,7 @@ namespace WFPresentation
         private void FormPesquisaCliente_Load(object sender, EventArgs e)
         {
             this.dataGridView1.DataSource = new ClienteService().GetData().Data;
+            this.dataGridView1.Columns.Remove("Locacoes");
         }
     }
 }

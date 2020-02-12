@@ -19,7 +19,7 @@ namespace DAO
         public DbSet<Filme> Filmes { get; set; }
         public DbSet<Locacao> Locacoes { get; set; }
 
-        public LocadoraDBContext() : base(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\git_repos\LocadoraEntityFramework\LocadoraDB.mdf;Integrated Security=True;Connect Timeout=30")
+        public LocadoraDBContext() : base(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\900185\source\git_repos\LocadoraEntityFramework\LocadoraDB.mdf;Integrated Security=True;Connect Timeout=30")
         {
 
         }

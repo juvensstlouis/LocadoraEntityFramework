@@ -119,11 +119,6 @@ namespace BLL
             }
         }
 
-        public DataResponse<FilmeResultSet> GetFilmes()
-        {
-            throw new NotImplementedException();
-        }
-
         public DataResponse<Filme> GetByID(int id)
         {
             DataResponse<Filme> response = new DataResponse<Filme>();
@@ -154,19 +149,119 @@ namespace BLL
             }
         }
 
-        public DataResponse<FilmeResultSet> GetFilmesByName(string nome)
+        public DataResponse<FilmeResultSet> GetFilmes()
         {
-            throw new NotImplementedException();
+            DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
+
+            using (LocadoraDBContext db = new LocadoraDBContext())
+            {
+                try
+                {
+                    response.Data = db.Filmes.Select(f => new FilmeResultSet()
+                                              {
+                                                  ID = f.ID,
+                                                  Nome = f.Nome,
+                                                  Genero = f.Genero.Nome,
+                                                  Classificacao = f.Classificacao
+                                              })
+                                              .ToList();
+                    response.Sucesso = true;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    response.Erros.Add("Erro no banco de dados. Contate o admin!");
+                    File.WriteAllText("log.txt", ex.Message);
+                    return response;
+                }
+            }
         }
 
-        public DataResponse<FilmeResultSet> GetFilmesByGenero(int genero)
+        public DataResponse<FilmeResultSet> GetFilmesByName(string nome)
         {
-            throw new NotImplementedException();
+            DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
+
+            using (LocadoraDBContext db = new LocadoraDBContext())
+            {
+                try
+                {
+                    response.Data = db.Filmes.Select(f => new FilmeResultSet()
+                                              { 
+                                                ID = f.ID, 
+                                                Nome = f.Nome, 
+                                                Genero = f.Genero.Nome, 
+                                                Classificacao = f.Classificacao
+                                              })
+                                              .Where(f => f.Nome.Contains(nome))
+                                              .ToList();
+                    response.Sucesso = true;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    response.Erros.Add("Erro no banco de dados. Contate o admin!");
+                    File.WriteAllText("log.txt", ex.Message);
+                    return response;
+                }
+            }
+        }
+
+        public DataResponse<FilmeResultSet> GetFilmesByGenero(int generoID)
+        {
+            DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
+
+            using (LocadoraDBContext db = new LocadoraDBContext())
+            {
+                try
+                {
+                    response.Data = db.Filmes.Where(f => f.GeneroID == generoID)
+                                             .Select(f => new FilmeResultSet()
+                                              {
+                                                  ID = f.ID,
+                                                  Nome = f.Nome,
+                                                  Genero = f.Genero.Nome,
+                                                  Classificacao = f.Classificacao
+                                              })
+                                              .ToList();
+                    response.Sucesso = true;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    response.Erros.Add("Erro no banco de dados. Contate o admin!");
+                    File.WriteAllText("log.txt", ex.Message);
+                    return response;
+                }
+            }
         }
 
         public DataResponse<FilmeResultSet> GetFilmesByClassificacao(Classificacao classificacao)
         {
-            throw new NotImplementedException();
+            DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
+
+            using (LocadoraDBContext db = new LocadoraDBContext())
+            {
+                try
+                {
+                    response.Data = db.Filmes.Select(f => new FilmeResultSet()
+                                              {
+                                                  ID = f.ID,
+                                                  Nome = f.Nome,
+                                                  Genero = f.Genero.Nome,
+                                                  Classificacao = f.Classificacao
+                                              })
+                                              .Where(f => f.Classificacao == classificacao)
+                                              .ToList();
+                    response.Sucesso = true;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    response.Erros.Add("Erro no banco de dados. Contate o admin!");
+                    File.WriteAllText("log.txt", ex.Message);
+                    return response;
+                }
+            }
         }
 
         private Response Validate(Filme item)

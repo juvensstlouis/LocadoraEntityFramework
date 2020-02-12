@@ -1,4 +1,5 @@
 ﻿using BLL;
+using BLL.Security;
 using Entity;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace WFPresentation
             DataResponse<Funcionario> response = funcionarioBLL.Autenticar(txtEmail.Text, txtSenha.Text);
             if (response.Sucesso)
             {
+                User.FuncionarioLogado = response.Data[0];
                 FormMenu frmMenu = new FormMenu();
                 this.Hide();
                 frmMenu.ShowDialog();
